@@ -1,0 +1,13 @@
+# Hệ điều hành (OS) rác hệ thống
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# Thư mục môi trường cục bộ của các phân hệ con (Phòng thủ từ xa)
+**/node_modules/
+**/.next/
+**/target/
+**/.idea/
+**/.vscode/
