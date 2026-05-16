@@ -1,0 +1,6 @@
+[submodule "booking-system-backend"]
+	path = booking-system-backend
+	url = https://github.com/vuphm/booking-system-backend.git
+[submodule "booking-system-frontend"]
+	path = booking-system-frontend
+	url = https://github.com/vuphm/booking-system-backend.git
