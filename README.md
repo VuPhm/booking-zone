@@ -10,10 +10,10 @@ Dự án được cấu trúc thành hai phân hệ độc lập chạy song son
 
 * **Phân hệ Backend (Spring Boot API Engine):** Xử lý logic nghiệp vụ xử lý đặt lịch nguyên tử, kiểm soát băm mật khẩu, bóc tách phân quyền an toàn và ngăn chặn bẫy trùng lịch.
     * *Đường dẫn cục bộ:* `./booking-system-backend`
-    * *Kho mã nguồn:* [Link Git của Backend (Thay link của bạn vào đây)]
+    * *Kho mã nguồn:* [https://github.com/VuPhm/booking-system-backend]
 * **Phân hệ Frontend (Next.js App Router Interface):** Hệ thống giao diện tương tác động cao, tối ưu hóa lưu bộ nhớ đệm client, chốt chặn bảo mật Server-side.
     * *Đường dẫn cục bộ:* `./booking-system-frontend`
-    * *Kho mã nguồn:* [Link Git của Frontend (Thay link của bạn vào đây)]
+    * *Kho mã nguồn:* [https://github.com/VuPhm/booking-system-frontend]
 
 ---
 
