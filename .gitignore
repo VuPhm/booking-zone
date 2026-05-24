@@ -11,3 +11,15 @@
 **/target/
 **/.idea/
 **/.vscode/
+# Node
+frontend/node_modules/
+frontend/.next/
+frontend/.env*
+
+# Java/Spring
+backend/target/
+backend/.mvn/
+backend/application-dev.properties
+
+# OS
+.DS_Store
