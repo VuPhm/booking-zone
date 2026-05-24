@@ -1,25 +1,21 @@
-# Hệ điều hành (OS) rác hệ thống
+# 1. IDE & OS (Bắt buộc chặn để tránh conflict rác giữa các thành viên)
+.idea/
+.vscode/
+*.iml
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
+Thumbs.db
 
-# Thư mục môi trường cục bộ của các phân hệ con (Phòng thủ từ xa)
-**/node_modules/
-**/.next/
-**/target/
-**/.idea/
-**/.vscode/
-# Node
+# 2. Frontend (Next.js)
 frontend/node_modules/
 frontend/.next/
+frontend/out/
+frontend/build/
 frontend/.env*
+!frontend/.env.example
 
-# Java/Spring
+# 3. Backend (Spring Boot)
 backend/target/
+backend/build/
 backend/.mvn/
-backend/application-dev.properties
-
-# OS
-.DS_Store
+!backend/.mvn/wrapper/maven-wrapper.jar
+backend/src/main/resources/application-dev.properties
