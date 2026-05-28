@@ -1,78 +1,72 @@
 package com.booking_service.security;
 
-import com.booking_service.security.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+
+import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
 import java.util.Date;
 
 @Component
 public class JwtUtils {
+    private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
     @Value("${jwt.secret}")
     private String jwtSecret;
 
-    private final long JWT_EXPIRATION = 86400000L; // 24 giờ
-    private final long REFRESH_EXPIRATION = 604800000L; // 7 ngày
+    @Value("${jwt.expiration.ms}")
+    private int jwtExpirationMs;
 
-    // JJWT 0.12.x yêu cầu đối tượng SecretKey cụ thể
-    private javax.crypto.SecretKey getSigningKey() {
+    // Bản 0.12.x yêu cầu trả về đối tượng SecretKey tường minh
+    private SecretKey getSigningKey() {
         byte[] keyBytes = this.jwtSecret.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateAccessToken(Authentication authentication) {
+    // Tạo Token - Cú pháp mới loại bỏ tiền tố "set"
+    public String generateJwtToken(Authentication authentication) {
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
+
         return Jwts.builder()
-                .subject(userPrincipal.getEmail()) // 0.12.x dùng .subject() thay cho .setSubject()
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION))
-                .signWith(getSigningKey()) // Không cần truyền tham số thuật toán, JJWT tự nhận diện độ dài key
+                .subject(userPrincipal.getUsername()) // Thay thế setSubject()
+                .issuedAt(new Date())                // Thay thế setIssuedAt()
+                .expiration(new Date((new Date()).getTime() + jwtExpirationMs)) // Thay thế setExpiration()
+                .signWith(getSigningKey())           // Tự nhận diện thuật toán HS512 qua độ dài Key
                 .compact();
     }
 
-    public String generateRefreshToken(Authentication authentication) {
-        UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
-        return Jwts.builder()
-                .subject(userPrincipal.getEmail())
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + REFRESH_EXPIRATION))
-                .signWith(getSigningKey())
-                .compact();
-    }
-
-    public String generateAccessTokenFromRefresh(String email) {
-        return Jwts.builder()
-                .subject(email)
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION))
-                .signWith(getSigningKey())
-                .compact();
-    }
-
-    public String getEmailFromToken(String token) {
-        return Jwts.parser() // Bản 0.12.x dùng thẳng .parser() quay lại nhưng trả về Builder mới
-                .verifyWith(getSigningKey()) // Thay thế cho .setSigningKey() cũ
+    // Trích xuất Username - Dùng parser() thay cho parserBuilder() đã bị xóa
+    public String getUserNameFromJwtToken(String token) {
+        return Jwts.parser()
+                .verifyWith(getSigningKey()) // Thay thế setSigningKey()
                 .build()
-                .parseSignedClaims(token) // Thay thế cho .parseClaimsJws() cũ
-                .getPayload() // Thay thế cho .getBody() cũ
+                .parseSignedClaims(token)    // Thay thế parseClaimsJws()
+                .getPayload()                // Thay thế getBody()
                 .getSubject();
     }
 
-    public boolean validateToken(String token) {
+    // Kiểm tra Token hợp lệ
+    public boolean validateJwtToken(String authToken) {
         try {
             Jwts.parser()
-                    .verifyWith(getSigningKey())
-                    .build()
-                    .parseSignedClaims(token);
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(authToken);
             return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            return false;
+        } catch (MalformedJwtException e) {
+            logger.error("JWT không hợp lệ: {}", e.getMessage());
+        } catch (ExpiredJwtException e) {
+            logger.error("JWT đã hết hạn: {}", e.getMessage());
+        } catch (UnsupportedJwtException e) {
+            logger.error("JWT không được hỗ trợ: {}", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            logger.error("JWT claims trống: {}", e.getMessage());
         }
+        return false;
     }
 }

@@ -1,0 +1,39 @@
+### 1. Test Đăng ký tài khoản mới (Register)
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "student_test@gmail.com",
+  "password": "secretpassword123"
+}
+
+### 2. Test Đăng ký trùng Email (Kỳ vọng: 400 Bad Request)
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "student_test@gmail.com",
+  "password": "secretpassword123"
+}
+
+### 3. Test Đăng nhập để lấy Token (Login)
+// IntelliJ sẽ tự bóc tách token lưu vào biến toàn cục sau khi gọi xong hàm này
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "student_test@gmail.com",
+  "password": "secretpassword123"
+}
+
+> {%
+    // Script nhỏ để tự động lưu token vào bộ nhớ tạm của IntelliJ
+    client.global.set("auth_token", response.body.token);
+%}
+
+### 4. Test truy cập API bảo mật không truyền Token (Kỳ vọng: 401 Unauthorized)
+GET http://localhost:8080/api/bookings
+
+### 5. Test truy cập API bảo mật CÓ truyền Token (Kỳ vọng: 200 OK hoặc thông quan)
+GET http://localhost:8080/api/bookings
+Authorization: Bearer {{auth_token}}
