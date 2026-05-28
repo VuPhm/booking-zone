@@ -13,6 +13,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RegisterRequest {
+    @NotBlank(message = "Tên đăng nhập không được để trống")
+    @Size(min = 3, max = 20, message = "Username phải từ 3 đến 20 ký tự")
+    private String username;
+
     @NotBlank(message = "Email không được để trống")
     @Email(message = "Email không đúng định dạng")
     private String email;

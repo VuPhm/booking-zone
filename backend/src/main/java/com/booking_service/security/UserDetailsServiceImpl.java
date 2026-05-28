@@ -2,6 +2,7 @@ package com.booking_service.security;
 
 import com.booking_service.entity.User;
 import com.booking_service.repository.UserRepository;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,12 +18,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        // Tìm kiếm user theo email từ database, nếu không thấy thì ném ngoại lệ
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy người dùng với email: " + email));
+    public @NonNull UserDetails loadUserByUsername(@NonNull String username) throws UsernameNotFoundException {
+        // Tìm kiếm trực tiếp bằng trường username mới
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy tài khoản: " + username));
 
-        // Ép kiểu (convert) sang UserDetailsImpl để Spring Security xử lý tiếp
         return UserDetailsImpl.build(user);
     }
 }

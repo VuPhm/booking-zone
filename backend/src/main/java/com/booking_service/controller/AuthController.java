@@ -36,31 +36,32 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-        // Thực hiện xác thực email và password thô từ client gửi lên
+        // Xác thực dựa trên Username và Password mới
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        
-        // Tạo chuỗi mã hóa JWT hạn dùng 24h cho user
         String jwt = jwtUtils.generateJwtToken(authentication);
 
-        // Trả về Json thô chứa token, client tự bóc tách để lưu LocalStorage
         return ResponseEntity.ok(new JwtResponse(jwt));
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
-        // Kiểm tra xem email trùng lặp hay chưa để tránh lỗi DB Constraint
-        if (userRepository.existsByEmail(registerRequest.getEmail())) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Error: Email đã được sử dụng!"));
+        // Kiểm tra trùng lặp cả Username và Email để đảm bảo tính toàn vẹn
+        if (userRepository.existsByUsername(registerRequest.getUsername())) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Error: Tên đăng nhập đã tồn tại!"));
         }
 
-        // Tạo tài khoản mới, bắt buộc phải mã hóa mật khẩu qua BCrypt
+        if (userRepository.existsByEmail(registerRequest.getEmail())) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Error: Email này đã được sử dụng!"));
+        }
+
         User user = new User();
+        user.setUsername(registerRequest.getUsername());
         user.setEmail(registerRequest.getEmail());
         user.setPasswordHash(encoder.encode(registerRequest.getPassword()));
-        user.setRole("CUSTOMER"); // Mặc định đăng ký mới luôn là CUSTOMER
+        user.setRole("CUSTOMER");
 
         userRepository.save(user);
 
