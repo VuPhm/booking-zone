@@ -1,0 +1,65 @@
+### =======================================================
+### SƠ ĐỒ TEST TOÀN DIỆN KHỐI AUTHENTICATION (INTELLIJ STRICT)
+### =======================================================
+
+### KỊCH BẢN 1: ĐĂNG KÝ TÀI KHOẢN MỚI THÀNH CÔNG
+POST {{baseUrl}}/register
+Content-Type: application/json
+
+{
+  "email": "developer2026@bookingzone.com",
+  "password": "securepassword123",
+  "fullName": "Lập Trình Viên Chính"
+}
+
+###
+
+### KỊCH BẢN 2: THỬ ĐĂNG KÝ TRÙNG EMAIL (KIỂM TRA CHỐT CHẶN LỖI)
+POST {{baseUrl}}/register
+Content-Type: application/json
+
+{
+  "email": "developer2026@bookingzone.com",
+  "password": "securepassword123",
+  "fullName": "Lập Trình Viên Chính"
+}
+
+###
+
+### KỊCH BẢN 3: ĐĂNG NHẬP THÀNH CÔNG (TỰ ĐỘNG LƯU TOKEN VÀO GLOBAL VARIABLE)
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "email": "developer2026@bookingzone.com",
+  "password": "securepassword123"
+}
+
+> {%
+    // Khối script xử lý sau khi nhận phản hồi đặc quyền của IntelliJ
+    client.test("Đăng nhập thành công và lưu Token", function() {
+        client.assert(response.status === 200, "Response status không phải 200");
+        client.assert(response.body.hasOwnProperty("accessToken"), "Không tìm thấy trường accessToken");
+
+        // Gán chuỗi mã JWT nhận được vào bộ nhớ tạm global 'authToken' của IntelliJ
+        client.global.set("authToken", response.body.accessToken);
+    });
+%}
+
+###
+
+### KỊCH BẢN 4: LẤY THÔNG TIN USER HIỆN TẠI (SỬ DỤNG BIẾN TOKEN TỰ ĐỘNG ĐÃ LƯU)
+GET {{baseUrl}}/me
+Authorization: Bearer {{authToken}}
+
+###
+
+### KỊCH BẢN 5: THỬ LẤY THÔNG TIN VỚI TOKEN SAI ĐỊNH DẠNG (KIỂM TRA PHÂN QUYỀN)
+GET {{baseUrl}}/me
+Authorization: Bearer token_fake_hoac_sai_dinh_dang
+
+###
+
+### KỊCH BẢN 6: ĐĂNG XUẤT HỆ THỐNG
+POST {{baseUrl}}/logout
+Authorization: Bearer {{authToken}}
