@@ -1,0 +1,86 @@
+### ==========================================
+### GIAI ĐOẠN 1: KHỞI TẠO TÀI KHOẢN & ĐĂNG NHẬP
+### ==========================================
+
+### 1. Đăng ký tài khoản Admin hệ thống
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "admin_system",
+  "email": "admin@service.com",
+  "password": "SecurePassword123"
+}
+
+### 2. Đăng ký tài khoản Khách hàng
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "customer_test",
+  "email": "customer@service.com",
+  "password": "CustomerPassword123"
+}
+
+### 3. Admin đăng nhập -> Trích xuất Token lưu biến toàn cục
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin_system",
+  "password": "SecurePassword123"
+}
+
+> {% client.global.set("admin_token", response.body.token); %}
+
+### 4. Khách hàng đăng nhập -> Trích xuất Token lưu biến toàn cục
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "customer_test",
+  "password": "CustomerPassword123"
+}
+
+> {% client.global.set("customer_token", response.body.token); %}
+
+
+### ==========================================
+### GIAI ĐOẠN 2: TÁC VỤ ADMIN (CẦN TOKEN ADMIN)
+### ==========================================
+
+### 5. Admin: Tạo mới dịch vụ -> Lưu lại ID dịch vụ
+POST http://localhost:8080/api/admin/services
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "name": "Bảo dưỡng chuyên sâu",
+  "price": 450000.00
+}
+
+> {% client.global.set("service_id", response.body.id); %}
+
+### 6. Admin: Cấu hình Slot cho dịch vụ vừa tạo (JSON đầu cha quản lý con)
+POST http://localhost:8080/api/admin/services/{{service_id}}/slots
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "startTime": "2026-05-28T08:00:00",
+  "endTime": "2026-05-28T09:30:00",
+  "maxCapacity": 3
+}
+
+> {% client.global.set("slot_id", response.body.id); %}
+
+
+### ==========================================
+### GIAI ĐOẠN 3: TRA CỨU CÔNG KHAI (PUBLIC)
+### ==========================================
+
+### 7. Public: Lấy toàn bộ danh mục dịch vụ (Kèm danh sách Slots con)
+GET http://localhost:8080/api/services
+
+### 8. Public: Lọc Slot trống theo ngày (Không truyền Token)
+GET http://localhost:8080/api/services/{{service_id}}/slots?date=2026-05-28

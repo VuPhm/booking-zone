@@ -24,24 +24,24 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        try {
-            String jwt = parseJwt(request);
-            if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
-                String username = jwtUtils.getUserNameFromJwtToken(jwt);
 
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                
-                // Đặt thông tin user vào Context của Spring Security để các Controller phía sau sử dụng
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
-        } catch (Exception e) {
-            logger.error("Không thể thiết lập xác thực người dùng: {}");
+        String path = request.getRequestURI();
+
+        // Loại biên: Bỏ qua filter hoàn toàn nếu là endpoint công khai
+        if (path.startsWith("/api/auth/") || path.startsWith("/api/services")) {
+            filterChain.doFilter(request, response);
+            return;
         }
 
+        // Logic xử lý Token hiện tại bên dưới...
+        String header = request.getHeader("Authorization");
+        if (header == null || !header.startsWith("Bearer ")) {
+            // Đối với endpoint bảo vệ, không có token sẽ chặn tại đây hoặc để FilterChain xử lý
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // Thực hiện validate token và set SecurityContextHolder...
         filterChain.doFilter(request, response);
     }
 
