@@ -1,0 +1,29 @@
+### Cấu hình biến môi trường nội bộ
+@baseUrl = http://localhost:3000/api/auth
+
+### Kịch bản 1: Thử nghiệm Đăng ký tài khoản qua BFF
+POST {{baseUrl}}/register
+Content-Type: application/json
+
+{
+  "email": "vscode.test@bookingzone.com",
+  "password": "secretpassword",
+  "fullName": "Kỹ Sư Thử Nghiệm VSCode",
+  "phone": "0911222333",
+  "role": "CUSTOMER"
+}
+
+### Kịch bản 2: Đăng nhập nhận httpOnly Cookie và đặt tên tham chiếu
+# @name login
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "email": "vscode.test@bookingzone.com",
+  "password": "secretpassword"
+}
+
+### --------------------------------------------------------------------
+### KỊCH BẢN 3: Thử nghiệm Đăng xuất xóa sạch Cookie trên trình duyệt
+### --------------------------------------------------------------------
+POST {{baseUrl}}/logout
