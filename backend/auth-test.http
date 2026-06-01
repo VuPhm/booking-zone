@@ -27,7 +27,7 @@ Content-Type: application/json
 ###
 
 ### KỊCH BẢN 3: ĐĂNG NHẬP THÀNH CÔNG (TỰ ĐỘNG LƯU TOKEN VÀO GLOBAL VARIABLE)
-POST {{baseUrl}}/login
+POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
