@@ -1,0 +1,60 @@
+### Create Slot
+
+POST http://localhost:8080/api/v1/slots
+Content-Type: application/json
+
+{
+  "slotDate": "2026-06-10",
+  "startTime": "08:00:00",
+  "endTime": "09:00:00",
+  "status": "AVAILABLE"
+}
+
+###
+
+### Create Another Slot
+
+POST http://localhost:8080/api/v1/slots
+Content-Type: application/json
+
+{
+  "slotDate": "2026-06-10",
+  "startTime": "09:00:00",
+  "endTime": "10:00:00",
+  "status": "AVAILABLE"
+}
+
+###
+
+### Get All Slots
+
+GET http://localhost:8080/api/v1/slots
+Accept: application/json
+
+###
+
+### Get Slot By Id
+
+GET http://localhost:8080/api/v1/slots/2
+Accept: application/json
+
+###
+
+### Update Slot
+
+PUT http://localhost:8080/api/v1/slots/1
+Content-Type: application/json
+
+{
+  "slotDate": "2026-06-15",
+  "startTime": "10:00:00",
+  "endTime": "11:00:00",
+  "status": "AVAILABLE"
+}
+
+###
+
+### Verify Updated Slot
+
+GET http://localhost:8080/api/v1/slots/2
+Accept: application/json

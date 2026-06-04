@@ -2,6 +2,8 @@ package com.booking.domain.repository;
 
 import com.booking.domain.entity.Slot;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,4 +16,6 @@ public interface SlotRepository extends JpaRepository<Slot, Long> {
             LocalDate slotDate,
             String status
     );
+
+
 }

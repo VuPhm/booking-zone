@@ -18,4 +18,7 @@ public interface SlotService {
     List<Slot> getAvailableSlotsByDate(LocalDate date);
 
     void deleteSlot(Long id);
+
+    Slot updateSlot(Long id, Slot slot);
+
 }

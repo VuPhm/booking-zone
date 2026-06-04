@@ -3,6 +3,7 @@ package com.booking.service.impl;
 import com.booking.domain.entity.Slot;
 import com.booking.domain.repository.SlotRepository;
 import com.booking.service.SlotService;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -49,5 +50,19 @@ public class SlotServiceImpl implements SlotService {
     @Override
     public void deleteSlot(Long id) {
         slotRepository.deleteById(id);
+    }
+
+    @Override
+    public Slot updateSlot(Long id, Slot updatedSlot) {
+
+        Slot slot = slotRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Slot not found"));
+
+        slot.setSlotDate(updatedSlot.getSlotDate());
+        slot.setStartTime(updatedSlot.getStartTime());
+        slot.setEndTime(updatedSlot.getEndTime());
+        slot.setStatus(updatedSlot.getStatus());
+
+        return slotRepository.save(slot);
     }
 }

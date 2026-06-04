@@ -41,4 +41,10 @@ public class SlotController {
         slotService.deleteSlot(id);
         return "Slot deleted successfully";
     }
+
+    @PutMapping("/{id}")
+    public Slot updateSlot(@PathVariable Long id,
+                           @RequestBody Slot slot) {
+        return slotService.updateSlot(id, slot);
+    }
 }
