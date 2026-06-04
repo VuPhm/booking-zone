@@ -1,12 +1,11 @@
 export interface UserProfile {
-  id: number;
-  email: string;
+  username: string; // Giữ để Navbar hoặc các logic khác dùng nếu cần
   fullName: string;
-  role: 'USER' | 'ADMIN'; // Phù hợp với phân quyền .hasRole("ADMIN") ở backend
+  role: 'CUSTOMER' | 'ADMIN'; // Cập nhật đúng role 'CUSTOMER' từ API của bạn
 }
 
 export interface AuthResponse {
   accessToken: string;
-  tokenType: string;
-  user: UserProfile;
+  fullName: string;
+  role: 'CUSTOMER' | 'ADMIN';
 }
