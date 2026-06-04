@@ -7,7 +7,6 @@ import * as z from "zod";
 import { toast } from "sonner";
 
 import { authService } from "@/services/authService";
-import { useAuthStore } from "@/store/useAuthStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -27,42 +26,54 @@ import {
 } from "@/components/ui/form";
 import Link from "next/link";
 
-// 1. Định nghĩa Schema Validation chuyển email thành username
-const loginSchema = z.object({
-  username: z.string().min(1, { message: "Tên tài khoản không được để trống" }),
-  password: z.string().min(1, { message: "Mật khẩu không được để trống" }),
-});
+// 1. Schema Validation chuyển email thành username
+const registerSchema = z
+  .object({
+    fullName: z
+      .string()
+      .min(2, { message: "Họ và tên phải có ít nhất 2 ký tự" }),
+    username: z
+      .string()
+      .min(3, { message: "Tên tài khoản phải có ít nhất 3 ký tự" })
+      .max(20, { message: "Tên tài khoản tối đa 20 ký tự" })
+      .regex(/^[a-zA-Z0-9_]+$/, {
+        message: "Tên tài khoản không chứa khoảng trắng hoặc ký tự đặc biệt",
+      }),
+    password: z
+      .string()
+      .min(6, { message: "Mật khẩu phải có ít nhất 6 ký tự" }),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Mật khẩu xác nhận không trùng khớp",
+    path: ["confirmPassword"],
+  });
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const router = useRouter();
-  const setAuth = useAuthStore((state) => state.setAuth);
 
-  const form = useForm<z.infer<typeof loginSchema>>({
-    resolver: zodResolver(loginSchema),
+  const form = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
+      fullName: "",
       username: "",
       password: "",
+      confirmPassword: "",
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof loginSchema>) => {
+  const onSubmit = async (values: z.infer<typeof registerSchema>) => {
     try {
-      // 1. Gọi API đăng nhập và nhận về Flat Payload
-      const res = await authService.login(values);
+      await authService.register({
+        fullName: values.fullName,
+        username: values.username, // Gửi username lên Spring Boot
+        password: values.password,
+      });
 
-      // 2. Truyền trực tiếp các trường phẳng vào Zustand Store
-      setAuth(res.accessToken, res.fullName, res.role);
-
-      toast.success(`Chào mừng trở lại, ${res.fullName}!`);
-
-      // 3. Điều hướng dựa trên role chính xác từ API ("ADMIN" hoặc "CUSTOMER")
-      if (res.role === "ADMIN") {
-        router.push("/admin");
-      } else {
-        router.push("/");
-      }
+      toast.success("Đăng ký tài khoản thành công! Hãy đăng nhập.");
+      router.push("/login");
     } catch (error: any) {
-      console.error("Login error:", error);
+      console.error("Register error:", error);
     }
   };
 
@@ -71,15 +82,29 @@ export default function LoginPage() {
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-2xl font-bold tracking-tight">
-            Đăng nhập
+            Tạo tài khoản
           </CardTitle>
           <CardDescription>
-            Nhập tài khoản và mật khẩu của bạn để truy cập hệ thống
+            Nhập thông tin của bạn để đăng ký thành viên BookingZone
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="fullName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Họ và tên</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Nguyen Van A" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name="username"
@@ -112,23 +137,41 @@ export default function LoginPage() {
                 )}
               />
 
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Xác nhận mật khẩu</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="••••••••"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <Button
                 type="submit"
                 className="w-full font-semibold mt-2"
                 disabled={form.formState.isSubmitting}
               >
-                {form.formState.isSubmitting ? "Đang xác thực..." : "Đăng nhập"}
+                {form.formState.isSubmitting ? "Đang xử lý..." : "Đăng ký"}
               </Button>
             </form>
           </Form>
 
           <div className="mt-4 text-center text-sm text-muted-foreground">
-            Chưa có tài khoản?{" "}
+            Đã có tài khoản?{" "}
             <Link
-              href="/register"
+              href="/login"
               className="text-primary underline underline-offset-4 hover:opacity-80"
             >
-              Đăng ký thành viên
+              Đăng nhập ngay
             </Link>
           </div>
         </CardContent>

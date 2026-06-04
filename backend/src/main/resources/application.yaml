@@ -4,12 +4,12 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/bookingzone
     username: postgres
-    password:
+    password: 123
     driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
-      ddl-auto: update                    # Tự động sinh bảng hoặc cập nhật cột dữ liệu [cite: 94]
+      ddl-auto: create                    # Tự động sinh bảng hoặc cập nhật cột dữ liệu [cite: 94]
     show-sql: true                        # In các câu lệnh SQL ra Terminal để tiện theo dõi
     properties:
       hibernate:

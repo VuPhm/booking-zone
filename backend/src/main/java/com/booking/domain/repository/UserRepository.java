@@ -8,6 +8,7 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    // Phương thức cốt lõi giúp AuthController tìm kiếm tài khoản khi đăng nhập
-    Optional<User> findByEmail(String email);
+    Optional<User> findByUsername(String username);
+
+    boolean existsByUsername(String username);
 }

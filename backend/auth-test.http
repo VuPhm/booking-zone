@@ -15,7 +15,7 @@ Content-Type: application/json
 ###
 
 ### KỊCH BẢN 2: THỬ ĐĂNG KÝ TRÙNG EMAIL (KIỂM TRA CHỐT CHẶN LỖI)
-POST {{baseUrl}}/register
+POST {{baseUrl}}/auth/register
 Content-Type: application/json
 
 {
@@ -61,5 +61,5 @@ Authorization: Bearer token_fake_hoac_sai_dinh_dang
 ###
 
 ### KỊCH BẢN 6: ĐĂNG XUẤT HỆ THỐNG
-POST {{baseUrl}}/logout
+POST {{baseUrl}}/auth/logout
 Authorization: Bearer {{authToken}}

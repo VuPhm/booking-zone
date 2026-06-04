@@ -16,9 +16,12 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Email không được để trống")
+    @NotBlank(message = "Tên đăng nhập không được để trống")
+    @Column(unique = true, nullable = false, length = 50)
+    private String username;
+
     @Email(message = "Định dạng email không hợp lệ")
-    @Column(unique = true, nullable = false, length = 100)
+    @Column(unique = true, length = 100)
     private String email;
 
     @NotBlank(message = "Mật khẩu không được để trống")
