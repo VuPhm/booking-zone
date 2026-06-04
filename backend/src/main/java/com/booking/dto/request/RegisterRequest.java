@@ -8,7 +8,9 @@ import lombok.Setter;
 
 @Getter @Setter
 public class RegisterRequest {
-    @NotBlank(message = "Email không được để trống")
+    @NotBlank(message = "Tên đăng nhập không được để trống")
+    private String username;
+
     @Email(message = "Định dạng email không hợp lệ")
     private String email;
 

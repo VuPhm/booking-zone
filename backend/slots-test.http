@@ -1,0 +1,35 @@
+### Biến môi trường tạm thời
+@token = eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkZXZlbG9wZXIyMDI2QGJvb2tpbmd6b25lLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc4MDI3MzYyNywiZXhwIjoxNzgwMzYwMDI3fQ.LEzvn0OGrdcF4jmg3P9YVIeumUNq1v_ToTLhQnaf7tw
+@baseUrl = http://localhost:8080/api/v1
+
+### ĐĂNG NHẬP THÀNH CÔNG (TỰ ĐỘNG LƯU TOKEN VÀO GLOBAL VARIABLE)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "developer2026@bookingzone.com",
+  "password": "securepassword123"
+}
+
+### 1. [PUBLIC] Lấy danh sách khung giờ trống (Không cần Token)
+GET {{baseUrl}}/slots/available
+Accept: application/json
+
+### 2. [ADMIN] Lấy tất cả khung giờ (Cần Token)
+GET {{baseUrl}}/admin/slots
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### 3. [ADMIN] Tạo khung giờ mới (Cần Token)
+POST {{baseUrl}}/admin/slots
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "startTime": "08:00:00",
+  "endTime": "09:00:00"
+}
+
+### 4. [ADMIN] Xóa khung giờ (Cần Token - Thay ID tương ứng)
+DELETE {{baseUrl}}/admin/slots/1
+Authorization: Bearer {{token}}

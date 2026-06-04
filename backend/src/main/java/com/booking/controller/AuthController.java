@@ -1,11 +1,11 @@
 package com.booking.controller;
 
-import com.booking.config.JwtUtils;
 import com.booking.domain.entity.Role;
 import com.booking.domain.entity.User;
 import com.booking.domain.repository.UserRepository;
 import com.booking.dto.request.LoginRequest;
 import com.booking.dto.request.RegisterRequest;
+import com.booking.security.JwtProvider;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,15 +24,16 @@ public class AuthController {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtUtils jwtUtils;
+    private final JwtProvider jwtProvider;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Email này đã được sử dụng trên hệ thống");
+        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
+            throw new IllegalArgumentException("Tên đăng nhập này đã được sử dụng");
         }
 
         User user = new User();
+        user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setFullName(request.getFullName());
@@ -43,25 +44,29 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new BadCredentialsException("Email hoặc mật khẩu không chính xác"));
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) { // Nhận chuẩn dữ liệu JSON [cite: 120]
+        // Tìm kiếm tài khoản thông qua trường username mới đồng bộ [cite: 9]
+        User user = userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new BadCredentialsException("Tên đăng nhập hoặc mật khẩu không chính xác"));
 
+        // Kiểm tra so khớp mật khẩu bằng PasswordEncoder
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new BadCredentialsException("Email hoặc mật khẩu không chính xác");
+            throw new BadCredentialsException("Tên đăng nhập hoặc mật khẩu không chính xác");
         }
 
-        String jwt = jwtUtils.generateToken(user.getEmail(), user.getRole().name());
+        // Gọi hàm generateToken đã được sửa đổi khớp 2 tham số String phía trên
+        String jwt = jwtProvider.generateToken(user.getUsername(), user.getRole().name());
 
+        // Trả về Object thông tin đồng bộ với Client Frontend
         return ResponseEntity.ok(Map.of(
-            "accessToken", jwt,
-            "role", user.getRole().name(),
-            "fullName", user.getFullName()
+                "token", jwt, // Đổi từ accessToken sang token để khớp destructuring tại giao diện UI
+                "role", user.getRole().name(),
+                "fullName", user.getFullName()
         ));
     }
 
     /**
-     * BỔ SUNG 1: LẤY THÔNG TIN USER HIỆN TẠI (PROFILE)
+     * LẤY THÔNG TIN USER HIỆN TẠI (PROFILE)
      * Endpoint này bắt buộc phải đi qua Bộ lọc JwtFilter để bóc tách token
      */
     @GetMapping("/me")
@@ -70,7 +75,7 @@ public class AuthController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentLogonEmail = (String) authentication.getPrincipal();
 
-        User user = userRepository.findByEmail(currentLogonEmail)
+        User user = userRepository.findByUsername(currentLogonEmail)
                 .orElseThrow(() -> new BadCredentialsException("Không tìm thấy thông tin phiên đăng nhập"));
 
         return ResponseEntity.ok(Map.of(
@@ -83,7 +88,7 @@ public class AuthController {
     }
 
     /**
-     * BỔ SUNG 2: ĐĂNG XUẤT PHÍA BACKEND
+     * ĐĂNG XUẤT PHÍA BACKEND
      * Trả về thông điệp xóa session sạch sẽ, tạo tiền đề để Next.js BFF xóa httpOnly Cookie
      */
     @PostMapping("/logout")

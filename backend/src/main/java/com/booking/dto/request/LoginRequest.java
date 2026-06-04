@@ -6,8 +6,9 @@ import lombok.Setter;
 
 @Getter @Setter
 public class LoginRequest {
-    @NotBlank(message = "Email không được để trống")
-    private String email;
-    @NotBlank(message = "Mật khẩu không được để trống")
+    @NotBlank(message = "Username không được để trống")
+    private String username; // Đảm bảo dùng chính xác từ khóa 'username' thay vì 'email'
+
+    @NotBlank(message = "Password không được để trống")
     private String password;
 }

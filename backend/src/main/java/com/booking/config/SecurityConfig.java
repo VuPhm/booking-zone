@@ -1,5 +1,6 @@
 package com.booking.config;
 
+import com.booking.security.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,8 +41,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/**").permitAll()
 
                         // 2. Cho phép xem danh sách dịch vụ hoặc chi tiết dịch vụ không cần token (GET công khai)
-                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/services/**").permitAll()
-
+//                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/services/**").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         // 3. Khóa toàn bộ cụm API Admin, chỉ cho phép USER có vai trò ADMIN truy cập
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
 
@@ -63,7 +64,6 @@ public class SecurityConfig {
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        // Sửa 'source' thành 'configuration' ở tham số thứ 2
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
