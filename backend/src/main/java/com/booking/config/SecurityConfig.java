@@ -29,27 +29,38 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder(); // Mã hóa mật khẩu bằng BCrypt
     }
 
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http
+//                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+//                .csrf(AbstractHttpConfigurer::disable)
+//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                .authorizeHttpRequests(auth -> auth
+//                        // 1. Cho phép truy cập tự do luồng Auth (Login/Register)
+//                        .requestMatchers("/api/v1/auth/**").permitAll()
+//
+//                        // 2. Cho phép xem danh sách dịch vụ hoặc chi tiết dịch vụ không cần token (GET công khai)
+//                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/services/**").permitAll()
+//
+//                        // 3. Khóa toàn bộ cụm API Admin, chỉ cho phép USER có vai trò ADMIN truy cập
+//                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+//
+//                        // 4. Tất cả các request khác (ví dụ: đặt lịch, xem profile) phải đăng nhập
+//                        .anyRequest().authenticated()
+//                )
+//                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+//
+//        return http.build();
+//    }
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .csrf(csrf -> csrf.disable()) // Tắt CSRF
                 .authorizeHttpRequests(auth -> auth
-                        // 1. Cho phép truy cập tự do luồng Auth (Login/Register)
-                        .requestMatchers("/api/v1/auth/**").permitAll()
-
-                        // 2. Cho phép xem danh sách dịch vụ hoặc chi tiết dịch vụ không cần token (GET công khai)
-                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/services/**").permitAll()
-
-                        // 3. Khóa toàn bộ cụm API Admin, chỉ cho phép USER có vai trò ADMIN truy cập
-                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
-
-                        // 4. Tất cả các request khác (ví dụ: đặt lịch, xem profile) phải đăng nhập
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll() // Cho phép tất cả các request đi qua
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
+        // Có thể comment dòng trên để bỏ hẳn bộ lọc JWT nếu muốn
         return http.build();
     }
 

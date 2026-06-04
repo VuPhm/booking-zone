@@ -22,7 +22,6 @@ public class Slot {
 
     private LocalTime endTime;
 
-    @Enumerated(EnumType.STRING)
     private String status;
 
     @OneToMany(mappedBy = "slot")
