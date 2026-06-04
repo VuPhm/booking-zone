@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: booking
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bookingzone
+    username: postgres
+    password:
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update                    # Tự động sinh bảng hoặc cập nhật cột dữ liệu [cite: 94]
+    show-sql: true                        # In các câu lệnh SQL ra Terminal để tiện theo dõi
+    properties:
+      hibernate:
+        format_sql: true                  # Định dạng câu lệnh SQL cho dễ đọc
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  port: 8080

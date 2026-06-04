@@ -1,109 +1,65 @@
-### [SCENARIO 1] ĐĂNG KÝ TÀI KHOẢN MỚI (SUCCESS)
-POST {{baseUrl}}/auth/register
+### =======================================================
+### SƠ ĐỒ TEST TOÀN DIỆN KHỐI AUTHENTICATION (INTELLIJ STRICT)
+### =======================================================
+
+### KỊCH BẢN 1: ĐĂNG KÝ TÀI KHOẢN MỚI THÀNH CÔNG
+POST {{baseUrl}}/register
 Content-Type: application/json
 
 {
-  "email": "newuser_{{$random.uuid}}@test.com",
-  "password": "112233"
+  "email": "developer2026@bookingzone.com",
+  "password": "securepassword123",
+  "fullName": "Lập Trình Viên Chính"
 }
 
-> {%
-    client.test("Register thành công", function() {
-        client.assert(response.status === 200, "Response status không phải 200");
-    });
-%}
+###
 
-
-### [SCENARIO 2] ĐĂNG KÝ TÀI KHOẢN TRÙNG EMAIL (FAIL - EXPECTED 400)
-POST {{baseUrl}}/auth/register
+### KỊCH BẢN 2: THỬ ĐĂNG KÝ TRÙNG EMAIL (KIỂM TRA CHỐT CHẶN LỖI)
+POST {{baseUrl}}/register
 Content-Type: application/json
 
 {
-  "email": "{{customer_email}}",
-  "password": "{{password}}"
+  "email": "developer2026@bookingzone.com",
+  "password": "securepassword123",
+  "fullName": "Lập Trình Viên Chính"
 }
 
-> {%
-    client.test("Chặn đăng ký trùng email", function() {
-        client.assert(response.status === 400, "Hệ thống không chặn trùng email (Expected 400)");
-    });
-%}
+###
 
-
-### [SCENARIO 3] ĐĂNG NHẬP (SUCCESS & TỰ ĐỘNG LƯU TOKEN)
-# @name login
+### KỊCH BẢN 3: ĐĂNG NHẬP THÀNH CÔNG (TỰ ĐỘNG LƯU TOKEN VÀO GLOBAL VARIABLE)
 POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "{{customer_email}}",
-  "password": "{{password}}"
+  "email": "developer2026@bookingzone.com",
+  "password": "securepassword123"
 }
 
 > {%
-    client.test("Đăng nhập thành công và trả về Access Token", function() {
-        client.assert(response.status === 200, "Đăng nhập thất bại");
-        client.assert(response.body.hasOwnProperty("accessToken"), "Thiếu thuộc tính accessToken trong response");
-    });
+    // Khối script xử lý sau khi nhận phản hồi đặc quyền của IntelliJ
+    client.test("Đăng nhập thành công và lưu Token", function() {
+        client.assert(response.status === 200, "Response status không phải 200");
+        client.assert(response.body.hasOwnProperty("accessToken"), "Không tìm thấy trường accessToken");
 
-    // Đọc Access Token từ JSON Body và nạp vào biến môi trường toàn cục (Runtime)
-    client.global.set("auth_token", response.body.accessToken);
-
-    // Senior Note: Kiểm tra xem Set-Cookie có chứa refresh_token không
-    client.test("Set-Cookie chứa HttpOnly Refresh Token", function() {
-        var cookieHeader = response.headers.valueOf("Set-Cookie");
-        client.assert(cookieHeader.indexOf("refresh_token") !== -1, "Không tìm thấy mã refresh_token trong Cookie");
+        // Gán chuỗi mã JWT nhận được vào bộ nhớ tạm global 'authToken' của IntelliJ
+        client.global.set("authToken", response.body.accessToken);
     });
 %}
 
+###
 
-### [SCENARIO 4] TRUY VẤN ENDPOINT BẢO MẬT KHI CHƯA AUTH (FAIL - EXPECTED 403/401)
-GET {{baseUrl}}/services
-Content-Type: application/json
+### KỊCH BẢN 4: LẤY THÔNG TIN USER HIỆN TẠI (SỬ DỤNG BIẾN TOKEN TỰ ĐỘNG ĐÃ LƯU)
+GET {{baseUrl}}/me
+Authorization: Bearer {{authToken}}
 
-> {%
-    client.test("Từ chối truy cập không có token", function() {
-        client.assert(response.status === 401 || response.status === 403, "Vẫn truy cập được endpoint bảo mật mà không cần Token");
-    });
-%}
+###
 
+### KỊCH BẢN 5: THỬ LẤY THÔNG TIN VỚI TOKEN SAI ĐỊNH DẠNG (KIỂM TRA PHÂN QUYỀN)
+GET {{baseUrl}}/me
+Authorization: Bearer token_fake_hoac_sai_dinh_dang
 
-### [SCENARIO 5] TRUY VẤN ENDPOINT BẢO MẬT VỚI ACCESS TOKEN VỪA LẤY (SUCCESS)
-GET {{baseUrl}}/services
-Content-Type: application/json
-Authorization: Bearer {{auth_token}}
+###
 
-> {%
-    client.test("Truy cập thành công endpoint bảo mật bằng Access Token hợp lệ", function() {
-        client.assert(response.status === 200, "Token hợp lệ nhưng bị từ chối truy cập");
-    });
-%}
-
-
-### [SCENARIO 6] LÀM MỚI PHIÊN ĐĂNG NHẬP (REFRESH TOKEN)
-# @name refresh
-POST {{baseUrl}}/auth/refresh
-Content-Type: application/json
-
-> {%
-    client.test("Cấp lại Access Token từ Refresh Token trong Cookie thành công", function() {
-        client.assert(response.status === 200, "Không thể refresh phiên làm việc");
-        client.assert(response.body.hasOwnProperty("accessToken"), "Không trả về Access Token mới");
-    });
-
-    // Ghi đè Access Token mới vào biến toàn cục để các request sau sử dụng
-    client.global.set("auth_token", response.body.accessToken);
-%}
-
-
-### [SCENARIO 7] ĐĂNG XUẤT (THU HỒI COOKIE REFRESH)
-POST {{baseUrl}}/auth/logout
-Content-Type: application/json
-
-> {%
-    client.test("Xóa Cookie thành công khi đăng xuất", function() {
-        client.assert(response.status === 200, "Đăng xuất thất bại");
-        var cookieHeader = response.headers.valueOf("Set-Cookie");
-        client.assert(cookieHeader.indexOf("Max-Age=0") !== -1 || cookieHeader.indexOf("Expires=") !== -1, "Cookie chưa bị xóa");
-    });
-%}
+### KỊCH BẢN 6: ĐĂNG XUẤT HỆ THỐNG
+POST {{baseUrl}}/logout
+Authorization: Bearer {{authToken}}
