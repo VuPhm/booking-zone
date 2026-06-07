@@ -5,7 +5,6 @@ import com.booking.service.ServiceItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/admin/services")
@@ -25,8 +24,8 @@ public class AdminServiceController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteService(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteService(@PathVariable Long id) {
         serviceItemService.deleteService(id);
-        return ResponseEntity.ok(Map.of("message", "Xóa dịch vụ thành công"));
+        return ResponseEntity.noContent().build();
     }
 }

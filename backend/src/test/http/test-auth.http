@@ -3,16 +3,32 @@ POST {{baseUrl}}/auth/register
 Content-Type: application/json
 
 {
-  "username": "dev",
+  "username": "pro",
   "password": "112233",
-  "fullName": "Lập Trình Viên Chính"
+  "fullName": "Nha cung cap mac dinh"
 }
 
-### 2: ĐĂNG NHẬP
+### 2: ĐĂNG NHẬP admin
 POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
   "username": "dev",
+  "password": "112233"
+}
+### 2: ĐĂNG NHẬP provider
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "pro",
+  "password": "112233"
+}
+### 2: ĐĂNG NHẬP customer
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "cus",
   "password": "112233"
 }

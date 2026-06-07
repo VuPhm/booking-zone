@@ -15,6 +15,7 @@ public class ServiceController {
 
     private final ServiceItemService serviceItemService;
     private final SlotService slotService;
+
     @GetMapping
     public ResponseEntity<List<ServiceItem>> getAllServices() {
         return ResponseEntity.ok(serviceItemService.getAllServices());
@@ -24,11 +25,12 @@ public class ServiceController {
     public ResponseEntity<ServiceItem> getServiceById(@PathVariable Long id) {
         return ResponseEntity.ok(serviceItemService.getServiceById(id));
     }
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteService(@PathVariable Long id) {
-        // Thực hiện logic xóa dịch vụ tại đây
-        // service.deleteById(id);
 
-        return ResponseEntity.noContent().build(); // Trả về mã 204 No Content
-    }
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity<Void> deleteService(@PathVariable Long id) {
+//        // Thực hiện logic xóa dịch vụ tại đây
+//         serviceItemService.deleteService(id);
+//
+//        return ResponseEntity.noContent().build(); // Trả về mã 204 No Content
+//    }
 }
