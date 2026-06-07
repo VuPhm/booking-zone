@@ -1,0 +1,29 @@
+POST http://localhost:8080/api/v1/provider/services
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkZXYiLCJyb2xlIjoiUk9MRV9QUk9WSURFUiIsImlhdCI6MTc4MDgyNDYxNywiZXhwIjoxNzgwOTExMDE3fQ.8QM7sAsA75RhchMu2-P5Qt-y_eg-kE-K2JrgIUqugHc
+
+{
+  "name": "Cắt tóc nam",
+  "description": "Bao gồm gội đầu",
+  "price": 100000,
+  "duration": 30,
+  "imageUrl": ""
+}
+
+###
+
+GET http://localhost:8080/api/v1/provider/services
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkZXYiLCJyb2xlIjoiUk9MRV9QUk9WSURFUiIsImlhdCI6MTc4MDgyNDYxNywiZXhwIjoxNzgwOTExMDE3fQ.8QM7sAsA75RhchMu2-P5Qt-y_eg-kE-K2JrgIUqugHc
+
+###
+
+PATCH http://localhost:8080/api/v1/provider/services/1/activate
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkZXYiLCJyb2xlIjoiUk9MRV9QUk9WSURFUiIsImlhdCI6MTc4MDgyNDYxNywiZXhwIjoxNzgwOTExMDE3fQ.8QM7sAsA75RhchMu2-P5Qt-y_eg-kE-K2JrgIUqugHc
+
+
+###
+PATCH http://localhost:8080/api/v1/provider/services/1/activate
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkZXYiLCJyb2xlIjoiUk9MRV9QUk9WSURFUiIsImlhdCI6MTc4MDgyNDYxNywiZXhwIjoxNzgwOTExMDE3fQ.8QM7sAsA75RhchMu2-P5Qt-y_eg-kE-K2JrgIUqugHc

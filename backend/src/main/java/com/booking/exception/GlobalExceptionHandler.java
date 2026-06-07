@@ -1,5 +1,7 @@
 package com.booking.exception;
 
+import com.booking.dto.response.ApiResponse;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -43,6 +45,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleAllUnexpectedExceptions(Exception ex) {
         ApiErrorResponse errorResponse = new ApiErrorResponse(
@@ -52,4 +55,12 @@ public class GlobalExceptionHandler {
         );
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleNotFound(
+            ResourceNotFoundException ex
+    ) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.error(ex.getMessage()));
+    }
+
 }
