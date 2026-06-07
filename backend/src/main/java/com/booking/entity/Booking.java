@@ -1,42 +1,43 @@
 package com.booking.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.time.LocalDateTime;
+import lombok.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "bookings")
-@Getter @Setter
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Booking {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String customerName;
+    @Column(nullable = false)
+    private LocalDate bookingDate; // Ngày hẹn khách đặt
 
-    private String customerEmail;
+    // 1. Khóa ngoại liên kết bảng users (Đảm bảo thực thể User của bạn có @Id là id hoặc một trường cụ thể)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    private User user;
 
-    private LocalDateTime bookedAt;
+    // 2. Khóa ngoại liên kết bảng service_items (Đảm bảo thực thể ServiceItem có @Id là id)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_id", referencedColumnName = "id", nullable = false)
+    private ServiceItem service;
 
-    @ManyToOne
-    @JoinColumn(name = "slot_id", nullable = false)
-    private Slot slot;
+    // 3. Khóa ngoại liên kết bảng time_slots (Đảm bảo thực thể TimeSlot có @Id là id)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "slot_id", referencedColumnName = "id", nullable = false)
+    private TimeSlot slot;
 
-    public Booking() {
-    }
+    @Column(nullable = false)
+    private Double totalPrice;
 
-    public Booking(Long id,
-                   String customerName,
-                   String customerEmail,
-                   LocalDateTime bookedAt,
-                   Slot slot) {
-        this.id = id;
-        this.customerName = customerName;
-        this.customerEmail = customerEmail;
-        this.bookedAt = bookedAt;
-        this.slot = slot;
-    }
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private BookingStatus status; // PENDING, CONFIRMED, CANCELLED
 }

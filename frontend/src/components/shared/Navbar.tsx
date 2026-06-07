@@ -30,7 +30,14 @@ export default function Navbar() {
           >
             Dịch vụ
           </Link>
-
+          {user && (
+            <Link
+              href="/history"
+              className="text-sm font-medium hover:underline"
+            >
+              Lịch hẹn của tôi
+            </Link>
+          )}
           {user ? (
             <>
               {user.role === "ADMIN" && (

@@ -42,14 +42,16 @@ export default function LoginPage() {
       const data = await authService.login(values);
       toast.success(`Chào mừng ${data.user.fullName} trở lại!`);
 
-      if (data.user.role === "ADMIN") {
+      // Check role khớp từ payload phẳng đã được map
+      if (data.user.role === "ADMIN" || data.user.role === "ROLE_ADMIN") {
         router.push("/admin");
       } else {
         router.push("/");
       }
     } catch (error: any) {
       toast.error(
-        error.response?.data?.message || "Đăng nhập thất bại, vui lòng thử lại",
+        error.response?.data?.message ||
+          "Đăng nhập thất bại, vui lòng kiểm tra lại",
       );
     }
   };

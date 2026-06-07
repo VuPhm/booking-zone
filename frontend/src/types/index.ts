@@ -28,3 +28,12 @@ export interface TimeSlot {
   endTime: string;
   status: 'AVAILABLE' | 'BOOKED';
 }
+
+export interface Booking {
+  id: number;
+  bookingDate: string;
+  service: ServiceItem;
+  timeSlot: TimeSlot;
+  totalPrice: number;
+  status: 'PENDING' | 'CONFIRMED' | 'CANCELLED';
+}

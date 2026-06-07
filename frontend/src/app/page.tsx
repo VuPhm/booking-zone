@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { catalogService } from "@/services/catalogService";
 import { ServiceCategory, ServiceItem } from "@/types";
@@ -21,6 +22,7 @@ export default function HomePage() {
     undefined,
   );
   const [loading, setLoading] = useState<boolean>(true);
+  const router = useRouter();
 
   // Load danh mục bộ lọc ban đầu
   useEffect(() => {
@@ -117,15 +119,11 @@ export default function HomePage() {
               <CardFooter>
                 <Button
                   className="w-full font-semibold"
-                  onClick={() =>
-                    toast.info(
-                      `Đã chọn: ${item.name}. Hãy sang mốc 3 để xử lý giữ slot!`,
-                    )
-                  }
+                  onClick={() => router.push(`/book/${item.id}`)} // Chuyển hướng thẳng sang form bốc ngày/giờ
                 >
                   Đặt lịch ngay
                 </Button>
-              </CardFooter>
+              </CardFooter>{" "}
             </Card>
           ))}
         </div>
