@@ -1,8 +1,8 @@
 package com.booking.controller;
 
-import com.booking.domain.entity.Role;
-import com.booking.domain.entity.User;
-import com.booking.domain.repository.UserRepository;
+import com.booking.entity.Role;
+import com.booking.entity.User;
+import com.booking.repository.UserRepository;
 import com.booking.dto.request.LoginRequest;
 import com.booking.dto.request.RegisterRequest;
 import com.booking.security.JwtProvider;

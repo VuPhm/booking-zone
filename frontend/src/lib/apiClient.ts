@@ -1,48 +1,32 @@
 import axios from 'axios';
-
-// Lấy Base URL từ biến môi trường
-const baseURL = process.env.NEXT_PUBLIC_API_URL;
+import { useAuthStore } from '@/store/authStore';
 
 export const apiClient = axios.create({
-  baseURL,
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Interceptor xử lý TRƯỚC KHI gửi request lên Backend
+// Interceptor tự động gài JWT vào Header của mọi request
 apiClient.interceptors.request.use(
   (config) => {
-    // Chỉ chạy ở môi trường Client (Trình duyệt) để tránh lỗi SSR của Next.js
-    if (typeof window !== 'undefined') {
-      const authStorage = localStorage.getItem('auth-storage');
-      if (authStorage) {
-        try {
-          const parsed = JSON.parse(authStorage);
-          const token = parsed?.state?.token;
-          if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-          }
-        } catch (error) {
-          console.error("Lỗi parse auth-storage từ localStorage:", error);
-        }
-      }
+    const token = useAuthStore.getState().token;
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Interceptor xử lý SAU KHI nhận response từ Backend (Bắt lỗi 401, 403)
+// Interceptor xử lý nếu Token hết hạn hoặc lỗi 401
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-      // Nếu token hết hạn hoặc không hợp lệ, xóa dữ liệu và đá về trang login
+    if (error.response?.status === 401) {
+      useAuthStore.getState().logout();
       if (typeof window !== 'undefined') {
-        localStorage.removeItem('auth-storage');
         window.location.href = '/login';
       }
     }

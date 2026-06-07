@@ -1,0 +1,39 @@
+### 1. Đăng ký tài khoản ADMIN
+POST http://localhost:8080/api/v1/auth/register
+Content-Type: application/json
+
+{
+  "username": "admin1",
+  "password": "112233",
+  "fullName": "Quản Trị Viên tối cao",
+  "role": "ADMIN"
+}
+
+### 2. Đăng ký tài khoản CUSTOMER
+POST http://localhost:8080/api/v1/auth/register
+Content-Type: application/json
+
+{
+  "username": "customer1",
+  "password": "112233",
+  "fullName": "Khách Hàng Thành Viên",
+  "role": "CUSTOMER"
+}
+
+### 3. Đăng nhập ADMIN -> Lấy Token dán vào {{adminToken}}
+POST http://localhost:8080/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin1",
+  "password": "112233"
+}
+
+### 4. Đăng nhập CUSTOMER -> Lấy Token dán vào {{customerToken}}
+POST http://localhost:8080/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "username": "customer1",
+  "password": "112233"
+}

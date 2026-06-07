@@ -2,83 +2,61 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/store/useAuthStore";
-import { authService } from "@/services/authService";
+import { useAuthStore } from "@/store/authStore";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner"; // 👈 Import trực tiếp 'toast' từ thư viện sonner
+import { toast } from "sonner";
 
-export function Navbar() {
-  const { user, isAuthenticated, clearAuth } = useAuthStore();
+export default function Navbar() {
+  const { user, logout } = useAuthStore();
   const router = useRouter();
 
-  const handleLogout = async () => {
-    try {
-      await authService.logout();
-    } catch (error) {
-      console.error("Backend logout error:", error);
-    } finally {
-      clearAuth();
-      // 👈 Cú pháp gọi thông báo thành công siêu gọn của Sonner
-      toast.success("Đăng xuất thành công!", {
-        description: "Hẹn gặp lại bạn lần sau.",
-      });
-      router.push("/login");
-    }
+  const handleLogout = () => {
+    logout();
+    toast.success("Đã đăng xuất tài khoản");
+    router.push("/login");
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
-      <div className="container flex h-16 items-center justify-between px-6">
-        {/* Logo dự án */}
-        <Link
-          href="/"
-          className="flex items-center space-x-2 font-bold text-xl tracking-tight text-primary"
-        >
-          Booking<span>Zone</span>
+    <nav className="border-b bg-white backdrop-blur">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
+        <Link href="/" className="text-xl font-bold text-primary">
+          BookingZone 🎯
         </Link>
 
-        {/* Menu điều hướng chính */}
-        <nav className="flex items-center space-x-6 text-sm font-medium">
-          <Link
-            href="/"
-            className="transition-colors hover:text-foreground/80 text-foreground"
-          >
-            Trang chủ
-          </Link>
+        <div className="flex items-center gap-4">
           <Link
             href="/services"
-            className="transition-colors hover:text-foreground/80 text-foreground"
+            className="text-sm font-medium hover:underline"
           >
             Dịch vụ
           </Link>
-
-          {/* Menu đặc quyền dành riêng cho ADMIN */}
-          {isAuthenticated && user?.role === "ADMIN" && (
+          {user && (
             <Link
-              href="/admin"
-              className="text-destructive font-semibold transition-colors hover:opacity-80"
+              href="/history"
+              className="text-sm font-medium hover:underline"
             >
-              Trang Quản Trị
+              Lịch hẹn của tôi
             </Link>
           )}
-        </nav>
-
-        {/* Khối xử lý trạng thái Đăng nhập / Đăng xuất */}
-        <div className="flex items-center space-x-4">
-          {isAuthenticated && user ? (
-            <div className="flex items-center space-x-4">
-              <span className="text-sm font-medium text-muted-foreground">
-                Xin chào,{" "}
-                <span className="text-foreground font-semibold">
-                  {user.fullName}
-                </span>
+          {user ? (
+            <>
+              {user.role === "ADMIN" && (
+                <Link
+                  href="/admin"
+                  className="text-sm font-medium text-destructive hover:underline"
+                >
+                  Quản trị
+                </Link>
+              )}
+              <span className="text-sm text-muted-foreground">
+                Chào, {user.fullName}
               </span>
               <Button variant="outline" size="sm" onClick={handleLogout}>
                 Đăng xuất
               </Button>
-            </div>
+            </>
           ) : (
-            <div className="flex items-center space-x-2">
+            <div className="flex gap-2">
               <Button variant="ghost" size="sm" asChild>
                 <Link href="/login">Đăng nhập</Link>
               </Button>
@@ -89,6 +67,6 @@ export function Navbar() {
           )}
         </div>
       </div>
-    </header>
+    </nav>
   );
 }
