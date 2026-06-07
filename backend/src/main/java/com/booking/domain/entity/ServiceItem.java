@@ -1,14 +1,17 @@
 package com.booking.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "services")
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ServiceItem {
 
     @Id

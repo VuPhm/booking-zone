@@ -1,0 +1,15 @@
+### 1. Lấy danh sách dịch vụ công khai (Không cần token)
+GET {{baseUrl}}/services
+Accept: application/json
+
+### 2. Admin tạo mới dịch vụ (Sử dụng token từ môi trường)
+POST {{baseUrl}}/admin/services
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "name": "Dịch vụ thử nghiệm nâng cao",
+  "description": "Mô tả dịch vụ",
+  "price": 200000,
+  "duration": 60
+}
