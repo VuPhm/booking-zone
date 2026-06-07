@@ -19,4 +19,4 @@ backend/build/
 backend/.mvn/
 !backend/.mvn/wrapper/maven-wrapper.jar
 backend/src/main/resources/application-dev.properties
-backend/.env*
+/backend/src/test/http/http-client.env.json
