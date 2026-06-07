@@ -1,7 +1,7 @@
 package com.booking.security;
 
-import com.booking.domain.entity.User;
-import com.booking.domain.repository.UserRepository;
+import com.booking.entity.User;
+import com.booking.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

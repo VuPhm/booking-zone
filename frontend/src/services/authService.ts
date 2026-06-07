@@ -1,26 +1,25 @@
 import { apiClient } from '@/lib/apiClient';
-import { AuthResponse, UserProfile } from '@/types/auth';
+import { useAuthStore } from '@/store/authStore';
+import { User } from '@/types';
+
+interface AuthResponse {
+  token: string;
+  user: User;
+}
 
 export const authService = {
-  // Đăng nhập hệ thống
-  login: async (data: any): Promise<AuthResponse> => {
-    const response = await apiClient.post<AuthResponse>('/auth/login', data);
-    return response.data;
+  async login(payload: Record<string, string>): Promise<AuthResponse> {
+    const { data } = await apiClient.post<AuthResponse>('/auth/login', payload);
+    useAuthStore.getState().setAuth(data.user, data.token);
+    return data;
   },
 
-  // Đăng ký tài khoản mới
-  register: async (data: any): Promise<void> => {
-    await apiClient.post('/auth/register', data);
+  async register(payload: Record<string, string>): Promise<void> {
+    await apiClient.post('/auth/register', payload);
   },
-
-  // Lấy thông tin user hiện tại (Dùng kiểm tra token còn sống hay không)
-  getProfile: async (): Promise<UserProfile> => {
-    const response = await apiClient.get<UserProfile>('/auth/me');
-    return response.data;
-  },
-
-  // Đăng xuất ở phía Backend nếu cần
-  logout: async (): Promise<void> => {
-    await apiClient.post('/auth/logout');
+  
+  async getMe(): Promise<User> {
+    const { data } = await apiClient.get<User>('/auth/me');
+    return data;
   }
 };

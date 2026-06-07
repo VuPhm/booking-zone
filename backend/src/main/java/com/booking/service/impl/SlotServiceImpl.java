@@ -1,9 +1,8 @@
 package com.booking.service.impl;
 
-import com.booking.domain.entity.Slot;
-import com.booking.domain.repository.SlotRepository;
+import com.booking.entity.Slot;
+import com.booking.repository.SlotRepository;
 import com.booking.service.SlotService;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;

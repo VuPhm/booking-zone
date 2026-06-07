@@ -1,35 +1,33 @@
-package com.booking.domain.entity;
+package com.booking.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigDecimal;
-
 @Entity
-@Table(name = "services")
+@Table(name = "service_items")
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ServiceItem {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false)
     private String name;
 
     @Column(columnDefinition = "TEXT")
     private String description;
 
     @Column(nullable = false)
-    private BigDecimal price;
+    private Double price;
 
     @Column(nullable = false)
-    private Integer duration; // Thời lượng thực hiện dịch vụ (tính bằng phút)
+    private Integer duration; // Thời lượng thực hiện (tính theo phút)
 
-    @Column(name = "image_url")
-    private String imageUrl;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "category_id", nullable = false)
+    private ServiceCategory category;
 }

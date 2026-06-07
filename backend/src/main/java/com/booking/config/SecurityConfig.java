@@ -41,9 +41,8 @@ public class SecurityConfig {
                         // 1. Nhóm API Công khai (Public)
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/services/**").permitAll()
-
-                        // 2. Nhóm API dành cho Provider
-                        .requestMatchers("/api/v1/provider/**").hasRole("PROVIDER")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/slots/available").permitAll()
 
                         // 3. Nhóm API dành cho Admin
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")

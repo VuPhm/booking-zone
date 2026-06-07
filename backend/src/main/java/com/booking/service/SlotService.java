@@ -1,6 +1,6 @@
 package com.booking.service;
 
-import com.booking.domain.entity.Slot;
+import com.booking.entity.Slot;
 
 import java.time.LocalDate;
 import java.util.List;

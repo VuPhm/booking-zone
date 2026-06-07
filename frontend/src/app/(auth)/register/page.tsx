@@ -1,21 +1,12 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { toast } from "sonner";
-
+import { useRouter } from "next/navigation";
 import { authService } from "@/services/authService";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -24,68 +15,52 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import Link from "next/link";
+import { toast } from "sonner";
 
-// 1. Schema Validation chuyển email thành username
-const registerSchema = z
-  .object({
-    fullName: z
-      .string()
-      .min(2, { message: "Họ và tên phải có ít nhất 2 ký tự" }),
-    username: z
-      .string()
-      .min(3, { message: "Tên tài khoản phải có ít nhất 3 ký tự" })
-      .max(20, { message: "Tên tài khoản tối đa 20 ký tự" })
-      .regex(/^[a-zA-Z0-9_]+$/, {
-        message: "Tên tài khoản không chứa khoảng trắng hoặc ký tự đặc biệt",
-      }),
-    password: z
-      .string()
-      .min(6, { message: "Mật khẩu phải có ít nhất 6 ký tự" }),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Mật khẩu xác nhận không trùng khớp",
-    path: ["confirmPassword"],
-  });
+const registerSchema = z.object({
+  username: z.string().min(3, "Tên đăng nhập tối thiểu 3 ký tự"),
+  password: z.string().min(6, "Mật khẩu tối thiểu 6 ký tự"),
+  fullName: z.string().min(1, "Họ và tên không được để trống"),
+  role: z.enum(["CUSTOMER", "STAFF"]), // Loại bỏ hoàn toàn PROVIDER cũ
+});
 
 export default function RegisterPage() {
   const router = useRouter();
-
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      fullName: "",
       username: "",
       password: "",
-      confirmPassword: "",
+      fullName: "",
+      role: "CUSTOMER",
     },
   });
 
   const onSubmit = async (values: z.infer<typeof registerSchema>) => {
     try {
-      await authService.register({
-        fullName: values.fullName,
-        username: values.username, // Gửi username lên Spring Boot
-        password: values.password,
-      });
-
+      await authService.register(values);
       toast.success("Đăng ký tài khoản thành công! Hãy đăng nhập.");
       router.push("/login");
     } catch (error: any) {
-      console.error("Register error:", error);
+      toast.error(error.response?.data?.message || "Tên đăng nhập đã tồn tại");
     }
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center p-6 bg-muted/40">
-      <Card className="w-full max-w-md shadow-lg">
-        <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-2xl font-bold tracking-tight">
-            Tạo tài khoản
-          </CardTitle>
+    <div className="flex min-h-[80vh] items-center justify-center px-4">
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle className="text-2xl">Đăng ký tài khoản</CardTitle>
           <CardDescription>
-            Nhập thông tin của bạn để đăng ký thành viên BookingZone
+            Tạo tài khoản để trải nghiệm luồng đặt lịch phẳng
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -98,27 +73,25 @@ export default function RegisterPage() {
                   <FormItem>
                     <FormLabel>Họ và tên</FormLabel>
                     <FormControl>
-                      <Input placeholder="Nguyen Van A" {...field} />
+                      <Input placeholder="Nguyễn Văn A" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Tên tài khoản (Username)</FormLabel>
+                    <FormLabel>Tên đăng nhập</FormLabel>
                     <FormControl>
-                      <Input placeholder="vup_admin" {...field} />
+                      <Input placeholder="username123" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="password"
@@ -126,52 +99,53 @@ export default function RegisterPage() {
                   <FormItem>
                     <FormLabel>Mật khẩu</FormLabel>
                     <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="••••••••"
-                        {...field}
-                      />
+                      <Input type="password" placeholder="••••••" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
-              <FormField
+              {/* <FormField
                 control={form.control}
-                name="confirmPassword"
+                name="role"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Xác nhận mật khẩu</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="••••••••"
-                        {...field}
-                      />
-                    </FormControl>
+                    <FormLabel>Vai trò thành viên</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Chọn vai trò" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="CUSTOMER">
+                          Khách hàng thành viên
+                        </SelectItem>
+                        <SelectItem value="STAFF">
+                          Nhân viên thực hiện
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
-              />
-
+              /> */}
               <Button
                 type="submit"
-                className="w-full font-semibold mt-2"
+                className="w-full"
                 disabled={form.formState.isSubmitting}
               >
-                {form.formState.isSubmitting ? "Đang xử lý..." : "Đăng ký"}
+                {form.formState.isSubmitting ? "Đang tạo..." : "Đăng ký"}
               </Button>
             </form>
           </Form>
-
           <div className="mt-4 text-center text-sm text-muted-foreground">
             Đã có tài khoản?{" "}
-            <Link
-              href="/login"
-              className="text-primary underline underline-offset-4 hover:opacity-80"
-            >
-              Đăng nhập ngay
+            <Link href="/login" className="text-primary hover:underline">
+              Đăng nhập
             </Link>
           </div>
         </CardContent>

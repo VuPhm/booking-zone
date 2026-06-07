@@ -1,9 +1,7 @@
-package com.booking.domain.repository;
+package com.booking.repository;
 
-import com.booking.domain.entity.Slot;
+import com.booking.entity.Slot;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
 import java.util.List;

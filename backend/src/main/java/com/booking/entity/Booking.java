@@ -1,4 +1,4 @@
-package com.booking.domain.entity;
+package com.booking.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

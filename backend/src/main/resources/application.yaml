@@ -6,7 +6,6 @@ spring:
     username: postgres
     password:
     driver-class-name: org.postgresql.Driver
-
   jpa:
     hibernate:
       ddl-auto: update                    # Tự động sinh bảng hoặc cập nhật cột dữ liệu

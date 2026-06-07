@@ -1,0 +1,35 @@
+### 1. Admin Tạo Danh mục (Category) mới
+POST http://localhost:8080/api/v1/admin/categories
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Chăm sóc tóc",
+  "description": "Gồm các dịch vụ cắt, gội, uốn, nhuộm thời trang"
+}
+
+### 2. Admin Tạo Gói dịch vụ phẳng (Gắn vào categoryId = 1)
+POST http://localhost:8080/api/v1/admin/services?categoryId=1
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Cắt Tóc Chuẩn Salon",
+  "description": "Combo cắt tóc, cạo mặt, gội đầu massage sảng khoái",
+  "price": 120000.0,
+  "duration": 45
+}
+
+### 3. Public Khách lấy toàn bộ dịch vụ (Kiểm định Flat Payload)
+GET http://localhost:8080/api/v1/services
+
+### 4. Public Khách lọc dịch vụ theo CategoryId
+GET http://localhost:8080/api/v1/services?categoryId=1
+
+### 5. Đánh chặn bảo mật: Khách vãng lai phá quyền (Yêu cầu trả về 401/403)
+POST http://localhost:8080/api/v1/admin/categories
+Content-Type: application/json
+
+{
+  "name": "Hacker Category"
+}
