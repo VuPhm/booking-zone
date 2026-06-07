@@ -7,7 +7,7 @@ interface AuthState {
   token: string | null;
   user: UserProfile | null;
   isAuthenticated: boolean;
-  setAuth: (accessToken: string, fullName: string, role: 'CUSTOMER' | 'ADMIN') => void;
+  setAuth: (accessToken: string, fullName: string, role: 'CUSTOMER' | 'ADMIN' | 'PROVIDER') => void;
   clearAuth: () => void;
 }
 

@@ -1,4 +1,6 @@
 allowBuilds:
-  msw: set this to true or false
+  '@ampproject/toolbox-optimizer': false
+  es5-ext: false
+  msw: false
   sharp: false
   unrs-resolver: false

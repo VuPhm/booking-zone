@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Lấy Base URL từ biến môi trường
-const baseURL = process.env.NEXT_PUBLIC_API_URL;
+const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'; // Giá trị mặc định nếu biến môi trường không được thiết lập
 
 export const apiClient = axios.create({
   baseURL,

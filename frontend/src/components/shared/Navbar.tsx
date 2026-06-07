@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
 import { authService } from "@/services/authService";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner"; // 👈 Import trực tiếp 'toast' từ thư viện sonner
+import { toast } from "sonner"; // Import trực tiếp 'toast' từ thư viện sonner
 
 export function Navbar() {
   const { user, isAuthenticated, clearAuth } = useAuthStore();
