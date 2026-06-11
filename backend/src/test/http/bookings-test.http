@@ -1,0 +1,23 @@
+### Khách hàng thành viên thực hiện đặt lịch (Gửi X-User-Id = 2)
+POST http://localhost:8080/api/v1/bookings
+Authorization: Bearer {{customerToken}}
+Content-Type: application/json
+X-User-Id: 2
+
+{
+  "bookingDate": "2026-06-15",
+  "serviceId": 1,
+  "timeSlotId": 1
+}
+
+### Đập lỗi trùng lịch (Chạy lại y hệt request trên -> Phải trả về lỗi 500/Mô tả trùng giờ)
+POST http://localhost:8080/api/v1/bookings
+Authorization: Bearer {{customerToken}}
+Content-Type: application/json
+X-User-Id: 3
+
+{
+  "bookingDate": "2026-06-15",
+  "serviceId": 1,
+  "timeSlotId": 1
+}

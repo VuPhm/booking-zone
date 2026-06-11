@@ -1,8 +1,7 @@
-package com.booking.domain.entity;
+package com.booking.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalTime;
 
@@ -10,8 +9,10 @@ import java.time.LocalTime;
 @Table(name = "time_slots")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class TimeSlot {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,6 +23,7 @@ public class TimeSlot {
     @Column(nullable = false)
     private LocalTime endTime;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String status = "AVAILABLE"; // Mặc định khi tạo là trống
+    private SlotStatus status; // AVAILABLE hoặc BOOKED
 }

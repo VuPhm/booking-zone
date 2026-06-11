@@ -1,50 +1,54 @@
 package com.booking.service.impl;
 
-import com.booking.domain.entity.ServiceItem;
-import com.booking.domain.repository.ServiceItemRepository;
+import com.booking.entity.ServiceCategory;
+import com.booking.entity.ServiceItem;
+import com.booking.repository.ServiceCategoryRepository;
+import com.booking.repository.ServiceItemRepository;
 import com.booking.service.ServiceItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ServiceItemServiceImpl implements ServiceItemService {
-
-    private final ServiceItemRepository serviceRepository;
+    private final ServiceItemRepository serviceItemRepository;
+    private final ServiceCategoryRepository categoryRepository;
 
     @Override
-    public List<ServiceItem> getAllServices() {
-        return serviceRepository.findAll();
-    }
+    public List<ServiceItem> getAllServices() { return serviceItemRepository.findAll(); }
+
+    @Override
+    public List<ServiceItem> getServicesByCategoryId(Long categoryId) { return serviceItemRepository.findByCategoryId(categoryId); }
 
     @Override
     public ServiceItem getServiceById(Long id) {
-        return serviceRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy dịch vụ với ID: " + id));
+        return serviceItemRepository.findById(id).orElseThrow(() -> new RuntimeException("Service item not found"));
     }
 
     @Override
-    public ServiceItem createService(ServiceItem serviceItem) {
-        return serviceRepository.save(serviceItem);
+    public ServiceItem createService(Long categoryId, ServiceItem serviceItem) {
+        ServiceCategory category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+        serviceItem.setCategory(category);
+        return serviceItemRepository.save(serviceItem);
     }
 
     @Override
-    public ServiceItem updateService(Long id, ServiceItem serviceItem) {
-        ServiceItem existingService = getServiceById(id);
+    public ServiceItem updateService(Long id, Long categoryId, ServiceItem serviceDetails) {
+        ServiceItem serviceItem = getServiceById(id);
+        ServiceCategory category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
         
-        existingService.setName(serviceItem.getName());
-        existingService.setDescription(serviceItem.getDescription());
-        existingService.setPrice(serviceItem.getPrice());
-        existingService.setDuration(serviceItem.getDuration());
-        existingService.setImageUrl(serviceItem.getImageUrl());
-        
-        return serviceRepository.save(existingService);
+        serviceItem.setName(serviceDetails.getName());
+        serviceItem.setDescription(serviceDetails.getDescription());
+        serviceItem.setPrice(serviceDetails.getPrice());
+        serviceItem.setDuration(serviceDetails.getDuration());
+        serviceItem.setCategory(category);
+        return serviceItemRepository.save(serviceItem);
     }
 
     @Override
-    public void deleteService(Long id) {
-        ServiceItem existingService = getServiceById(id);
-        serviceRepository.delete(existingService);
-    }
+    public void deleteService(Long id) { serviceItemRepository.deleteById(id); }
 }

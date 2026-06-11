@@ -1,4 +1,4 @@
-package com.booking.domain.entity;
+package com.booking.entity;
 
 public enum Role {
     ADMIN,      // Quản trị viên hệ thống

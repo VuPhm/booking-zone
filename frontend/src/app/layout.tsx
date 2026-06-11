@@ -1,17 +1,13 @@
 import type { Metadata } from "next";
-import { Inter, Geist } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
-import { Navbar } from "@/components/shared/Navbar";
-import { Sonner } from "@/components/ui/sonner";
-import { cn } from "@/lib/utils";
-
-const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
+import Navbar from "@/components/shared/Navbar";
+import { Toaster } from "sonner"; // Đảm bảo dùng Sonner chuẩn stack mới
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "BookingZone - Hệ thống đặt lịch trực tuyến",
-  description: "Ứng dụng đặt lịch nhanh chóng, tiện lợi",
+  title: "BookingZone - Hệ thống đặt lịch salon",
 };
 
 export default function RootLayout({
@@ -20,16 +16,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="vi" className={cn("font-sans", geist.variable)}>
+    <html lang="vi">
       <body className={inter.className}>
-        <div className="relative flex min-h-screen flex-col">
-          {/* Thanh công cụ xuyên suốt ứng dụng */}
-          <Navbar />
-
-          {/* Nội dung thay đổi theo từng trang */}
-          <main className="flex-1">{children}</main>
-        </div>
-        <Sonner />
+        <Navbar />
+        <main className="mx-auto max-w-7xl px-4 py-6">{children}</main>
+        <Toaster position="top-right" richColors />
       </body>
     </html>
   );
