@@ -24,4 +24,5 @@ public class CreateServiceRequest {
     private Integer duration;
 
     private String imageUrl;
+
 }

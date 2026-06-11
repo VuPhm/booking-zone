@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 @Builder
 public class ServiceItemResponse {
 
-    private Long id;
+//    private Long id;
 
     private String name;
 
