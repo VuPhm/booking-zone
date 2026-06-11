@@ -25,7 +25,7 @@ public class JwtProvider {
     public String generateToken(String username, String roleName) {
         return Jwts.builder()
                 .setSubject(username)
-                .claim("role", "ROLE_" + roleName) // Đảm bảo đính kèm tiền tố ROLE_ cho Spring Security
+                .claim("role", roleName) // Đảm bảo đính kèm tiền tố ROLE_ cho Spring Security
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(new Date().getTime() + JWT_EXPIRATION))
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -43,7 +43,7 @@ public class JwtProvider {
         String role = userPrincipal.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .findFirst()
-                .orElse("ROLE_CUSTOMER");
+                .orElse("CUSTOMER");
 
         return Jwts.builder()
                 .setSubject(userPrincipal.getUsername())

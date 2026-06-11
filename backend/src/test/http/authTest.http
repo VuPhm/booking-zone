@@ -1,0 +1,83 @@
+### =========================
+### AUTH - REGISTER
+### =========================
+
+POST http://localhost:8080/api/v1/auth/register
+Content-Type: application/json
+
+{
+  "username": "customer01",
+  "email": "customer01@gmail.com",
+  "password": "123456",
+  "fullName": "Customer One"
+}
+
+### =========================
+### AUTH - LOGIN
+### =========================
+
+POST http://localhost:8080/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "username": "customer01",
+  "password": "123456"
+}
+
+> {%
+    client.global.set("token", response.body.data.token);
+%}
+
+### =========================
+### AUTH - PROFILE
+### =========================
+
+GET http://localhost:8080/api/v1/auth/me
+Authorization: Bearer {{token}}
+
+### =========================
+### AUTH - LOGOUT
+### =========================
+
+POST http://localhost:8080/api/v1/auth/logout
+Authorization: Bearer {{token}}
+
+### =========================
+### LOGIN FAIL
+### =========================
+
+POST http://localhost:8080/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "username": "customer01",
+  "password": "wrong-password"
+}
+
+### =========================
+### REGISTER DUPLICATE USERNAME
+### =========================
+
+POST http://localhost:8080/api/v1/auth/register
+Content-Type: application/json
+
+{
+  "username": "customer01",
+  "email": "duplicate@gmail.com",
+  "password": "123456",
+  "fullName": "Duplicate User"
+}
+
+### =========================
+### REGISTER VALIDATION ERROR
+### =========================
+
+POST http://localhost:8080/api/v1/auth/register
+Content-Type: application/json
+
+{
+  "username": "",
+  "email": "abc",
+  "password": "",
+  "fullName": ""
+}

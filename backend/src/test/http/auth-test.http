@@ -1,0 +1,28 @@
+### =======================================================
+### SƠ ĐỒ TEST TOÀN DIỆN KHỐI AUTHENTICATION (INTELLIJ STRICT)
+### =======================================================
+
+### KỊCH BẢN 1: ĐĂNG KÝ TÀI KHOẢN MỚI THÀNH CÔNG
+POST http://localhost:8080/api/v1/auth/register
+Content-Type: application/json
+
+{
+  "username": "dev",
+  "password": "112233",
+  "fullName": "Lập Trình Viên Chính"
+}
+
+
+###
+
+POST http://localhost:8080/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "username": "dev",
+  "password": "112233"
+}
+
+
+###
+
